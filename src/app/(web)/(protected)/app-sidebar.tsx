@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "~/components/ui/sidebar";
+import useProject from "~/hooks/use-project";
 import { cn } from "~/lib/utils";
 
 const items = [
@@ -31,30 +32,31 @@ const items = [
     
 ]
 
-const projects = [
-    {
-        name: 'Project 1'
-    },
-    {
-        name: 'Droject 2'
-    },
-    {
-        name: 'Kroject 3'
-    },
-    {
-        name: 'Oroject 4'
-    },
-    {
-        name: 'Uroject 5'
-    },
-    {
-        name: 'Troject 6'
-    },
-]
+// const projects = [
+//     {
+//         name: 'Project 1'
+//     },
+//     {
+//         name: 'Droject 2'
+//     },
+//     {
+//         name: 'Kroject 3'
+//     },
+//     {
+//         name: 'Oroject 4'
+//     },
+//     {
+//         name: 'Uroject 5'
+//     },
+//     {
+//         name: 'Troject 6'
+//     },
+// ]
 
 export const AppSidebar = () => {
     const pathname = usePathname()
     const {open} = useSidebar()
+    const {projects,projectId,setProjectId }= useProject()
   return (
     <Sidebar collapsible="icon" variant="floating">
         <SidebarHeader>
@@ -94,15 +96,14 @@ export const AppSidebar = () => {
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SidebarMenu>
-                        {projects.map((project)=>(
+                        {projects?.map((project)=>(
                             <SidebarMenuItem key={project.name}>
-                                <SidebarMenuButton asChild>
+                                <SidebarMenuButton onClick={()=>{setProjectId(project.id)}} asChild>
                                     <div>
                                         <div className={cn(
                                             'rounded-sm border size-6 flex items-center justify-center text-sm bg-white text-primary',
                                             {
-                                                'bg-primary text-white': true
-                                                // 'bg-primary text-white': project.id === project.id
+                                                   'bg-primary text-white': projectId === project.id
                                             }
                                         )}>
                                             {project.name[0]}
