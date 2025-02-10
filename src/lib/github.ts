@@ -1,5 +1,7 @@
 import {Octokit} from 'octokit'
 import { db } from '~/server/db'
+import axios from 'axios'
+import { aiSummarizeCommit } from './ai'
 
 export const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
@@ -42,8 +44,39 @@ export const pollCommit = async(projectId: string) => {
     console.log(`project: ${project}, githubUrl: ${githubUrl}`)
     const commitHashes = await getCommitHash(githubUrl)
     const unprocessedCommits = await filterUnprocessedCommits(projectId,commitHashes)
-    console.log(unprocessedCommits)
-    return unprocessedCommits
+    const summaryResponses = await Promise.allSettled(unprocessedCommits.map(async(commit)=>{return summarizeCommit(githubUrl,commit.commitHash)}))
+    const summaries = summaryResponses.map((response)=>{
+        if(response.status ===  'fulfilled'){
+            return response.value as string
+        }
+        return ""
+    })
+const commits = await db.commit.createMany({
+    data: summaries.map((summary,index)=>{
+        console.log(`processing commit ${index}`)
+        return {
+            projectId: projectId,
+            commitHash: unprocessedCommits[index]!.commitHash,
+            commitMessage: unprocessedCommits[index]!.commitMessage,
+            commitAuthorName: unprocessedCommits[index]!.commitAuthorName,
+            commitAuthorAvatar: unprocessedCommits[index]!.commitAuthorAvatar,
+            commitDate: unprocessedCommits[index]!.commitDate,
+            summary: summary
+        }
+    })
+})
+
+    return commits
+}
+
+async function summarizeCommit(githubUrl: string, commitHash: string){
+    //get the diff and pass the diff to AI
+    const {data }= await axios.get(`${githubUrl}/commit/${commitHash}.diff`,{
+        headers:{
+            'Accept': 'application/vnd.github.v3.diff'
+        }
+    })
+    return await aiSummarizeCommit(data) || ""
 }
 
 async function fetchProjectsGithubUrl(projectId: string){

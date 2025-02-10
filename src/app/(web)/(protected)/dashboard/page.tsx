@@ -4,13 +4,13 @@ import { ExternalLink, Github } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 import useProject from '~/hooks/use-project'
+import CommitLog from './commit-log'
 
 const DashboardPage = () => {
     const {project} = useProject()
     if(!project) return
   return (
     <div>
-      {project.id}
       <div className='flex items-center justify-between flex-wrap gap-y-4'>
         {/* github link */}
         <div className='w-fit rounded-md bg-primary px-4 py-3'>
@@ -45,7 +45,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="mt-8">
-        commitsLogs
+       <CommitLog/>
       </div>
     </div>
   )

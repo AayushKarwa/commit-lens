@@ -1,8 +1,8 @@
-import React from 'react'
+
 import { api } from '~/trpc/react'
 import { useLocalStorage } from 'usehooks-ts'
 
-const useProject = () => {
+ const useProject = () => {
   const { data: projects } = api.project.getAllProjects.useQuery()
   const [projectId, setProjectId] = useLocalStorage('commitLens-projectId', null)
 
@@ -16,4 +16,4 @@ const useProject = () => {
   }
 }
 
-export default useProject
+export default useProject;
