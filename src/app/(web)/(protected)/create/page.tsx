@@ -1,5 +1,6 @@
 'use client'
 import React from 'react'
+import { Button } from '~/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { Input } from '~/components/ui/input'
 
@@ -12,7 +13,7 @@ type FormInput = {
 const CreatePage = () => {
     const {register, handleSubmit, reset} = useForm<FormInput>()
     function onSubmit(data: FormInput){
-        window.alert(data)
+        window.alert(JSON.stringify(data))
         return true;
     }
   return (
@@ -36,13 +37,18 @@ const CreatePage = () => {
                 <div className="h-4"></div>
                 <Input required
                 {...register('repoUrl',{required:true})}
-                placeholder='Repo URL'
+                type='url'
+                placeholder='Github URL'
                 />
                 <div className="h-4"></div>
                 <Input 
                 {...register('githubToken',{required:false})}
-                placeholder='Github token for private repositories (Optional)'
+                placeholder='Github token (Optional)'
                 />
+                <div className="h-4"></div>
+                <Button type='submit'>
+                    Create Project
+                </Button>
             </form>
         </div>
     </div>
