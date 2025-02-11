@@ -6,6 +6,9 @@ import React from 'react'
 import useProject from '~/hooks/use-project'
 import CommitLog from './commit-log'
 import AskQuestionCard from './ask-question-card'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+import { count } from 'console'
 
 const DashboardPage = () => {
     const {project} = useProject()
@@ -46,7 +49,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="mt-8">
-       <CommitLog/>
+       <CommitLog />
       </div>
     </div>
   )

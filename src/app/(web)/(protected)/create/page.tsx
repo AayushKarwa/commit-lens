@@ -6,6 +6,7 @@ import { Input } from '~/components/ui/input'
 import { api } from '~/trpc/react'
 import { toast } from 'sonner'
 import useRefetch from '~/hooks/use-refetch'
+import { Loader } from 'lucide-react'
 
 
 type FormInput = {
@@ -67,7 +68,7 @@ const CreatePage = () => {
                 />
                 <div className="h-4"></div>
                 <Button type='submit' disabled={createProject.isPending}>
-                    Create Project
+                    {createProject.isPending? <Loader className='animate-spin w-12 h-12'/> : 'Create Project' }
                 </Button>
             </form>
         </div>
@@ -75,5 +76,6 @@ const CreatePage = () => {
    </div>
   )
 }
+
 
 export default CreatePage

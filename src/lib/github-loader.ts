@@ -6,7 +6,7 @@ import { db } from '~/server/db'
 
 export const loadGithubRepo = async(githubUrl: string, githubToken?: string)=>{
     const loader = new GithubRepoLoader(githubUrl, {
-        accessToken: githubToken || '',
+        accessToken: process.env.GITHUB_TOKEN || '',
         branch: 'main',
         ignoreFiles: [
             // 🔹 Dependency lock files
@@ -68,7 +68,7 @@ export const loadGithubRepo = async(githubUrl: string, githubToken?: string)=>{
         unknown: 'warn',
         maxConcurrency: 5,
     });
-    
+
     const docs = await loader.load()
     return docs;
 }
