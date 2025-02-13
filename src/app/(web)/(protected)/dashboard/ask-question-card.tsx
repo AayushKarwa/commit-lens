@@ -12,15 +12,17 @@ import { readStreamableValue } from 'ai/rsc'
 import CodeRefferences from './code-references'
 import { api } from '~/trpc/react'
 import { toast } from 'sonner'
+import useRefetch from '~/hooks/use-refetch'
 
 const AskQuestionCard = () => {
-  const {project} = useProject()
-  const [loading,setLoading] = useState(false)
-  const [open,setOpen] = useState(false)
-  const [question,setQuestion]= useState('')
+    const refetch = useRefetch()
+const {project} = useProject()
+const [loading,setLoading] = useState(false)
+const [open,setOpen] = useState(false)
+const [question,setQuestion]= useState('')
 const [filesReferences, setFilesReferences] = useState<{fileName:string,sourceCode:string,summary:string,similarity:number}[]>([])
-  const [answer,setAnswer] = useState('')
-  const saveAnswer = api.project.saveAnswer.useMutation()
+const [answer,setAnswer] = useState('')
+const saveAnswer = api.project.saveAnswer.useMutation()
 
   const onSubmit = async(e: React.FormEvent<HTMLFormElement>)=>{
     setAnswer('')
@@ -33,6 +35,7 @@ const [filesReferences, setFilesReferences] = useState<{fileName:string,sourceCo
     const {output,filesRefferences: filesReferences} = await askQuestion(question,project.id)
     setOpen(true)
     setFilesReferences(filesReferences)
+    setQuestion('')
 
     for await (const delta of readStreamableValue(output)){
         if(delta){
@@ -65,6 +68,8 @@ const [filesReferences, setFilesReferences] = useState<{fileName:string,sourceCo
             },{
                 onSuccess:()=>{
                     toast.success('Answer saved')
+                    refetch();
+                   
                 },
                 onError:()=>{
                     toast.error('Failed to save answer')
@@ -94,7 +99,7 @@ const [filesReferences, setFilesReferences] = useState<{fileName:string,sourceCo
             <form onSubmit={onSubmit}>
                 <Textarea value={question} onChange={(e)=>setQuestion(e.target.value)} placeholder='which file should i edit to change home page'/>
                 <div className='h-4'></div>
-                    <Button type='submit' disabled={loading}>
+                    <Button type='submit' disabled={loading || question.trim() === ''}>
                         Ask CommitLens!
                     </Button>
                 
